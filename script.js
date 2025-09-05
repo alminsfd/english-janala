@@ -52,7 +52,7 @@ const wordLoad = (words) => {
                 <P class="font-semibold text-[#18181B] font-bangla md:text-3xl text-xl">${word.meaning ? word.meaning : "শব্দের অর্থ পাওয়া যায়নি"}/${word.pronunciation ? word.pronunciation : "শব্দের উচ্চারণ পাওয়া যায়নি"}</P>
                 <div class="icons_container flex justify-between items-center md:mt-15 mt-8 mb-4 mx-4">
                     <button class="cursor-pointer bg-[#1a90ff56] hover:bg-[#1a90ff73] rounded-xl p-2"   onclick="wordDtails(${word.id})" ><i class="fa-solid fa-circle-info"></i></button>
-                    <button class="cursor-pointer bg-[#1a90ff56] hover:bg-[#1a90ff73] rounded-xl p-2"><i class="fa-solid fa-volume-high"></i></button>
+                    <button  onclick="pronounceWord('${word.word}')" class="cursor-pointer bg-[#1a90ff56] hover:bg-[#1a90ff73] rounded-xl p-2"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
             </div>
         
@@ -124,4 +124,31 @@ const setspinner = (status) => {
         document.getElementById("spiner").classList.add("hidden")
         document.getElementById("word_section").classList.remove("hidden")
     }
+}
+
+
+
+document.getElementById("btn-searching").addEventListener("click",()=>{
+    const lessonBtns = document.querySelectorAll(".lesson-btns")
+    removeActive( lessonBtns)
+   const inputSearch=document.getElementById("input-search")
+   const inputValue=inputSearch.value.trim().toLowerCase() 
+   fetch("https://openapi.programming-hero.com/api/words/all")
+   .then(res=>res.json())
+   .then(data=>{
+     const wordList=data.data
+     const Filterdata=wordList.filter(word=>
+        word.word.toLowerCase().includes(inputValue)
+     )
+      wordLoad(Filterdata)
+    //   console.log(Filterdata )
+   })
+   
+})
+
+
+function pronounceWord(word) {
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-EN"; // English
+  window.speechSynthesis.speak(utterance);
 }
